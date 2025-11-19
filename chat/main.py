@@ -3,26 +3,23 @@ import os
 from google import genai
 
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-openai = openai.OpenAI(api_key=OPENAI_API_KEY)
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 
 def chat(prompt):
-    response = openai.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt},
-        ],
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt,
     )
-    return response.choices[0].message.content
+    return response.text
 
 
 def main():
     user_prompt = input("Enter your prompt: ")
     response = chat(user_prompt)
-    print("Response from OpenAI:")
+    print("Response from Gemini:")
     print(response)
 
 
