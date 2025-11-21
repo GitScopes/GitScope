@@ -10,6 +10,7 @@ GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 """ This needs to be worked upon and refined """
+# This is to just test how it would function
 
 
 def search_projects(query):
