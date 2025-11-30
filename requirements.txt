@@ -1,3 +1,5 @@
+pygithub
+python-dotenv
 google==3.0.0
 google-genai==1.51.0
 requests==2.32.5
