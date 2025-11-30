@@ -2,6 +2,10 @@ import google.generativeai as genai
 import requests
 import json
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 def get_readme(repo_full_name: str) -> str:
@@ -103,26 +107,3 @@ def summarize_repos(repos: list[dict]) -> list[dict]:
     return repos
 
 
-# ============================================================================
-# USAGE EXAMPLE - Add this to your existing search script
-# ============================================================================
-
-if __name__ == "__main__":
-    # Your existing search code
-    from search_github import search_repos
-    
-    query = input("Search repos: ")
-    results = search_repos(query, limit=5)
-    
-    # Add this line to get summaries
-    results = summarize_repos(results)
-    
-    # Display with summaries
-    for repo in results:
-        print(f"\n{repo['full_name']} - ⭐ {repo['stars']}")
-        print(f"  {repo['url']}")
-        print(f"  📝 {repo['summary']}")
-        if repo['features']:
-            print(f"  ✨ Features: {', '.join(repo['features'][:3])}")
-        if repo['technologies']:
-            print(f"  🔧 Tech: {', '.join(repo['technologies'])}")
