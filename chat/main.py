@@ -16,7 +16,7 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 def search_projects(query):
     g = Github(GITHUB_TOKEN)
     repositories = g.search_repositories(query=query)
-    return [repo.full_name for repo in repositories[:5]]
+    return [repo.full_name for repo in repositories[:5]]  # type: ignore
 
 
 def chat(prompt):
@@ -43,6 +43,7 @@ def main():
         )
         response = chat(user_prompt)
         print("Response from Gemini:")
+        print(response)
 
 
 if __name__ == "__main__":
