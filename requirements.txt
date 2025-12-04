@@ -3,5 +3,6 @@ python-dotenv
 google==3.0.0
 google-genai==1.51.0
 requests==2.32.5
-google-generativeai
-python-dotenv
+google-generativeai==0.3.3
+python-dotenv==1.0.0
+Gitpython==3.1.29
