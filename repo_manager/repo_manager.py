@@ -1,12 +1,14 @@
 import os
 import logging
 import requests
-import shutil
 from urllib.parse import urlparse
 from git import Repo, exc  # Requires: pip install gitpython
 
-# Configure logging
+# Configure logging: generates logs for debugging purposes
+# basicConfig is a method to configure the logging system.
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# getlogger is a method to create a logger instance and  __name__ is a special variable that holds the name of the current module.
+# therefore, it tells the user which module the log messages are coming from.
 logger = logging.getLogger(__name__)
 
 class RepoManager:
@@ -22,6 +24,7 @@ class RepoManager:
             default_save_path (str): Default local folder to save cloned repos. 
                                      Defaults to './downloaded_repos' if None.
         """
+        # Set default save path and create directory if it doesn't exist
         if default_save_path:
             self.default_save_path = default_save_path
         else:
@@ -30,14 +33,17 @@ class RepoManager:
         if not os.path.exists(self.default_save_path):
             os.makedirs(self.default_save_path)
 
+    # Helper method to extract repo name from URL
     def _get_repo_name_from_url(self, url):
         """Extracts the repository name from the URL."""
         parsed = urlparse(url)
         path_parts = parsed.path.strip('/').split('/')
+        # Assumes URL format is like: github.com/owner/repo.git and returns 'repo'
         if len(path_parts) >= 2:
             return path_parts[-1].replace('.git', '')
         return "unknown_repo"
 
+    # Main method to clone a repository
     def clone_repo(self, repo_url, local_path=None):
         """
         Clones a remote repository to the local machine.
@@ -50,6 +56,7 @@ class RepoManager:
         Returns:
             str: The full path to the cloned repository.
         """
+        # Extract repository name
         repo_name = self._get_repo_name_from_url(repo_url)
         
         # Determine the final destination directory
@@ -79,6 +86,7 @@ class RepoManager:
             logger.error(f"Unexpected error: {e}")
             raise
 
+    # Fallback method to download ZIP if git clone fails
     def download_zip_fallback(self, repo_url, save_path=None):
         """
         Fallback: Downloads the repository as a ZIP if git clone fails or isn't desired.
@@ -96,23 +104,29 @@ class RepoManager:
         clean_url = repo_url.rstrip('.git')
         zip_url = f"{clean_url}/archive/refs/heads/main.zip"
 
+        # Download the ZIP file
         try:
             logger.info(f"Attempting ZIP download from {zip_url}...")
             response = requests.get(zip_url, stream=True)
             
+            # If main branch doesn't exist, try master
             if response.status_code == 404:
                 zip_url = f"{clean_url}/archive/refs/heads/master.zip"
                 response = requests.get(zip_url, stream=True)
 
+            # Check for successful response
             response.raise_for_status()
 
+            # File writing 
             with open(local_filename, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
             
+            # Log completion
             logger.info(f"ZIP Download complete: {local_filename}")
             return local_filename
 
+        # Handle request exceptions
         except requests.exceptions.RequestException as e:
             logger.error(f"Failed to download zip: {e}")
             raise Exception("Failed to download ZIP archive.")
@@ -139,6 +153,7 @@ if __name__ == "__main__":
     # Open the folder selection dialog
     user_selected_path = filedialog.askdirectory(title="Select Target Folder for Clone")
 
+    # If user selected a folder, proceed with cloning
     if user_selected_path:
         try:
             print(f"User clicked Clone for: {test_url}")

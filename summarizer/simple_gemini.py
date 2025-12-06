@@ -4,11 +4,13 @@ import json
 import os
 from dotenv import load_dotenv
 
+# Load environment variables from .env file
 load_dotenv()
 
 
 def get_readme(repo_full_name: str) -> str:
     """Fetch README from GitHub"""
+    # Split owner and repo
     owner, repo = repo_full_name.split("/")
 
     # Try main branch
@@ -25,7 +27,7 @@ def get_readme(repo_full_name: str) -> str:
 
     raise Exception("README not found")
 
-
+# Use Gemini to summarize
 def summarize_with_gemini(readme: str, repo_name: str) -> dict:
     """Use Gemini to summarize"""
 
@@ -43,6 +45,7 @@ def summarize_with_gemini(readme: str, repo_name: str) -> dict:
 
     # Truncate long READMEs
     if len(readme) > 10000:
+        # Truncate to first 10,000 characters
         readme = readme[:10000] + "\n..."
 
     prompt = f"""Analyze this README and respond with JSON only:
@@ -56,7 +59,7 @@ Respond with ONLY this JSON (no markdown, no code blocks):
     "features": ["feature1", "feature2", "feature3"],
     "technologies": ["tech1", "tech2", "tech3"]
 }}"""
-
+    # Generate response
     try:
         response = model.generate_content(prompt)
         response_text = response.text.strip()
@@ -76,7 +79,7 @@ Respond with ONLY this JSON (no markdown, no code blocks):
     except Exception as e:
         return {"summary": f"Error: {str(e)}", "features": [], "technologies": []}
 
-
+# Main function to summarize repos
 def summarize_repos(repos: list[dict]) -> list[dict]:
     """
     Add summaries to repos from search_repos()
