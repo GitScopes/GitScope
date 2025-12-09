@@ -36,11 +36,3 @@ def search_repos(
             }
         )
     return repos[:limit]
-
-
-query = input("search repos: ")
-results = search_repos(query)
-
-for repo in results:
-    print(f"{repo['full_name']} - ⭐ {repo['stars']}")
-    print(f"  {repo['url']}\n")
