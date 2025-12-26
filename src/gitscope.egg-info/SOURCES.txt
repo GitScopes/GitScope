@@ -2,7 +2,6 @@ README.md
 pyproject.toml
 setup.cfg
 src/gitscope/__init__.py
-src/gitscope/_init__.py
 src/gitscope/ai.py
 src/gitscope/clone.py
 src/gitscope/github_search.py
