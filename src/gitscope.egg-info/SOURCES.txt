@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+src/gitscope/__init__.py
+src/gitscope/ai.py
+src/gitscope/clone.py
+src/gitscope/github_search.py
+src/gitscope/installer.py
+src/gitscope/main.py
+src/gitscope/summarize.py
+src/gitscope.egg-info/PKG-INFO
+src/gitscope.egg-info/SOURCES.txt
+src/gitscope.egg-info/dependency_links.txt
+src/gitscope.egg-info/entry_points.txt
+src/gitscope.egg-info/top_level.txt
