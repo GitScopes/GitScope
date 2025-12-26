@@ -6,3 +6,4 @@ venv/
 venv13/
 .env
 .DS_store
+/__pycache__
