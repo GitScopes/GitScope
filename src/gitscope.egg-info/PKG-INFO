@@ -4,4 +4,4 @@ Version: 0.1.0
 Summary: GitHub repository exploration CLI
 Author: 
 Author-email: 
-License: MIT
+Requires-Python: >=3.9

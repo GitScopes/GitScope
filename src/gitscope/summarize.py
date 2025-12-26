@@ -20,7 +20,7 @@ def _fetch_readme(full_name: str) -> str:
     ]
 
     for url in urls:
-        r = requests.get(url, timeout=10)
+        r = requests.get(url, timeout=20)
         if r.status_code == 200:
             return r.text
 
@@ -51,7 +51,7 @@ Return exactly this schema:
 """
 
     try:
-        raw = generate_json_from_prompt(prompt, model="gemini-1.5-flash")
+        raw = generate_json_from_prompt(prompt, model="gemini-2.5-flash")
 
         # Defensive cleanup
         raw = raw.strip()

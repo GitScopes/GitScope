@@ -43,7 +43,7 @@ def chat(prompt: str, model: str = "gemini-2.5-flash") -> str:
     return response.text
 
 
-def generate_json_from_prompt(prompt: str, model: str = "gemini-1.5-flash") -> str:
+def generate_json_from_prompt(prompt: str, model: str = "gemini-2.5-flash") -> str:
     """
     Generate structured (usually JSON) text from a prompt.
     Caller is responsible for parsing/validating JSON.
