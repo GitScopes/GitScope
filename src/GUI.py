@@ -1,5 +1,12 @@
 import customtkinter as ctk
-from search_github import search_repos  # Import your function
+from search_github import search_repos
+from tkinter import filedialog
+from repo_manager import RepoManager  # type: ignore
+import sys
+import os
+
+sys.path.insert(0, os.path.dirname(__file__))
+
 
 app = ctk.CTk()
 app.title("GitScope")
@@ -19,6 +26,8 @@ search_entry.pack(pady=10)
 
 
 def show_details(repo):
+    global current_repo_url
+    current_repo_url = repo["url"]
     search_frame.pack_forget()
     details_frame.pack(fill="both", expand=True)
     repo_name_label.configure(text=repo["full_name"])
@@ -58,6 +67,41 @@ details_frame = ctk.CTkFrame(app)
 repo_name_label = ctk.CTkLabel(details_frame, text="", font=("Arial", 24))
 repo_name_label.pack(pady=50)
 
+current_repo_url = None
+
+
+def clone_repo_action():
+    path = filedialog.askdirectory(title="Select Clone Destination")
+    if path:
+        try:
+            manager = RepoManager()
+            cloned = manager.clone_repo(current_repo_url, path)
+            print(f"Cloned to: {cloned}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+def download_zip_action():
+    path = filedialog.askdirectory(title="Select Download Location")
+    if path:
+        try:
+            manager = RepoManager()
+            zip_file = manager.download_zip_fallback(current_repo_url, path)
+            print(f"Downloaded: {zip_file}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+clone_button = ctk.CTkButton(
+    details_frame, text="Clone Repository", command=clone_repo_action
+)
+clone_button.pack(pady=10)
+
+download_button = ctk.CTkButton(
+    details_frame, text="Download ZIP", command=download_zip_action
+)
+download_button.pack(pady=10)
+
 back_button = ctk.CTkButton(
     details_frame,
     text="Back",
@@ -66,6 +110,6 @@ back_button = ctk.CTkButton(
         search_frame.pack(fill="both", expand=True),
     ],
 )
-back_button.pack()
+back_button.pack(pady=10)
 search_frame.pack(fill="both", expand=True)
 app.mainloop()
