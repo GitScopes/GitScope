@@ -27,6 +27,7 @@ def get_readme(repo_full_name: str) -> str:
 
     raise Exception("README not found")
 
+
 # Use Gemini to summarize
 def summarize_with_gemini(readme: str, repo_name: str) -> dict:
     """Use Gemini to summarize"""
@@ -41,7 +42,7 @@ def summarize_with_gemini(readme: str, repo_name: str) -> dict:
         }
 
     genai.configure(api_key=api_key)  # type: ignore
-    model = genai.GenerativeModel("gemini-1.5-flash")  # type: ignore
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     # Truncate long READMEs
     if len(readme) > 10000:
@@ -78,6 +79,7 @@ Respond with ONLY this JSON (no markdown, no code blocks):
 
     except Exception as e:
         return {"summary": f"Error: {str(e)}", "features": [], "technologies": []}
+
 
 # Main function to summarize repos
 def summarize_repos(repos: list[dict]) -> list[dict]:

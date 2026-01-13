@@ -2,12 +2,11 @@ import customtkinter as ctk
 from search_github import search_repos
 from tkinter import filedialog
 from repo_manager import RepoManager  # type: ignore
+from summarizer import get_readme, summarize_with_gemini
 import sys
 import os
 
 sys.path.insert(0, os.path.dirname(__file__))
-
-
 app = ctk.CTk()
 app.title("GitScope")
 app.geometry("600x500")
@@ -24,6 +23,8 @@ search_entry = ctk.CTkEntry(
 )
 search_entry.pack(pady=10)
 
+results_frame = None
+
 
 def show_details(repo):
     global current_repo_url
@@ -32,12 +33,25 @@ def show_details(repo):
     details_frame.pack(fill="both", expand=True)
     repo_name_label.configure(text=repo["full_name"])
 
+    try:
+        readme = get_readme(repo["full_name"])
+        data = summarize_with_gemini(readme, repo["full_name"])
+
+        summary_label.configure(text=data["summary"])
+    except:
+        summary_label.configure(text="No summary available")
+
 
 # Search button
 def search_clicked():
+    global results_frame
+
     query = search_entry.get()
     repos = search_repos(query)  # Uses defaults: stars, desc, 10
 
+    if results_frame is None:
+        results_frame = ctk.CTkScrollableFrame(search_frame, width=500, height=300)
+        results_frame.pack(pady=20)
     # Clear old results
     for widget in results_frame.winfo_children():
         widget.destroy()
@@ -51,14 +65,12 @@ def search_clicked():
             command=lambda r=repo: show_details(r),
         )
         result_btn.pack(pady=5, fill="x")
+    # Results area
 
 
 search_button = ctk.CTkButton(search_frame, text="Search", command=search_clicked)
 search_button.pack(pady=10)
 
-# Results area
-results_frame = ctk.CTkScrollableFrame(search_frame, width=500, height=300)
-results_frame.pack(pady=20)
 
 # ---details_frame---
 
@@ -66,6 +78,10 @@ details_frame = ctk.CTkFrame(app)
 
 repo_name_label = ctk.CTkLabel(details_frame, text="", font=("Arial", 24))
 repo_name_label.pack(pady=50)
+
+summary_label = ctk.CTkLabel(details_frame, text="", wraplength=500)
+summary_label.pack(pady=20)
+
 
 current_repo_url = None
 
