@@ -41,6 +41,8 @@ def main():
     p_inst = sub.add_parser("install", help="Generate install commands")
     p_inst.add_argument("repo_url", help="HTTP(S) URL to repo")
 
+    p_help = sub.add_parser("help",help="Explanations")
+
     args = parser.parse_args()
 
     if args.command == "search":
@@ -76,7 +78,7 @@ def main():
         print("Generated commands:")
         for c in cmds:
             print(c)
-
-
+    elif args.command == "help":
+        print("The commands that can be used are: \n 1. Search (Search GitHub repositories)\n 2. Summarize (Summarize a Repo's README) \n 3. Clone (Clone a repository) \n 4. Install (Generates installation commands) ")
 if __name__ == "__main__":
     main()
