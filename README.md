@@ -3,7 +3,9 @@ GitScope is an AI-powered web app that helps developers explore and refine proje
 
 # Usage
 To use the package, follow these steps:
-  Install the cli client by running: 
+  Install the cli client by running:
+  
   `pip install -e` .
 And then, 
+
   `export PYTHONPATH="$PWD/src:$PYTHONPATH"`
