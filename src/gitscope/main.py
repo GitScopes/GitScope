@@ -17,6 +17,7 @@ from gitscope.github_search import search_repos
 from gitscope.summarize import summarize_repo
 from gitscope.clone import RepoManager
 from gitscope.installer import generate_install_commands
+from gitscope.ai import ChatSession
 
 
 def main():
@@ -41,7 +42,7 @@ def main():
     p_inst = sub.add_parser("install", help="Generate install commands")
     p_inst.add_argument("repo_url", help="HTTP(S) URL to repo")
 
-    p_help = sub.add_parser("help",help="Explanations")
+    p_help = sub.add_parser("help", help="Explanations")
 
     args = parser.parse_args()
 
@@ -55,9 +56,57 @@ def main():
 
     elif args.command == "summarize":
         out = summarize_repo(args.repo)
-        print("Summary:\n", out.get("summary", ""))
-        print("Features:", out.get("features", []))
-        print("Technologies:", out.get("technologies", []))
+
+        # --- Decorated Summary UI ---
+        print("\n" + "=" * 60)
+        print(f" 🚀 GitScope: Repository Summary")
+        print("=" * 60)
+        print(f"📦 Repo: {args.repo}")
+
+        print(f"\n📝 Summary:\n{out.get('summary', '')}")
+
+        print(f"\n✨ Features:")
+        for feat in out.get("features", []):
+            print(f"  • {feat}")
+
+        print(f"\n🛠 Technologies:")
+        techs = ", ".join(out.get("technologies", []))
+        print(f"  • {techs}")
+
+        print("\n" + "=" * 60)
+        print(" 💬 Interactive Session (Type 'exit' or 'quit' to stop)")
+        print("=" * 60)
+
+        # --- Interactive Chat Loop ---
+        session = ChatSession()
+
+        # Seed the session with the summary context so Gemini knows what we're talking about
+        context_seed = (
+            f"You just summarized the repository '{args.repo}'. "
+            f"Summary: {out.get('summary')}. "
+            f"Features: {out.get('features')}. "
+            f"Technologies: {out.get('technologies')}. "
+            "The user will now ask follow-up questions. Answer them based on this context and your general knowledge."
+        )
+        session.add_message("model", context_seed)
+
+        while True:
+            try:
+                user_input = input("\n👤 You: ").strip()
+                if user_input.lower() in ["exit", "quit"]:
+                    print("👋 Session ended. History cleared.")
+                    break
+                if not user_input:
+                    continue
+
+                print("🤖 GitScope: ", end="", flush=True)
+                response = session.send_message(user_input)
+                print(response)
+                print("\n" + "─" * 60)
+
+            except KeyboardInterrupt:
+                print("\n👋 Session ended. History cleared.")
+                break
 
     elif args.command == "clone":
         manager = RepoManager()
@@ -79,6 +128,10 @@ def main():
         for c in cmds:
             print(c)
     elif args.command == "help":
-        print("The commands that can be used are: \n 1. Search (Search GitHub repositories)\n 2. Summarize (Summarize a Repo's README) \n 3. Clone (Clone a repository) \n 4. Install (Generates installation commands) ")
+        print(
+            "The commands that can be used are: \n 1. Search (Search GitHub repositories)\n 2. Summarize (Summarize a Repo's README) \n 3. Clone (Clone a repository) \n 4. Install (Generates installation commands) "
+        )
+
+
 if __name__ == "__main__":
     main()

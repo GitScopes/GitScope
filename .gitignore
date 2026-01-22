@@ -7,3 +7,4 @@ venv/
 .DS_store
 __pycache__/
 .geminiignore
+history.json
